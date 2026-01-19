@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Redirecting...</title>
+    <script>
+      var segmentCount = 1
+      var l = window.location
+      var base = l.pathname.split('/').slice(0, 1 + segmentCount).join('/')
+      var path = l.pathname.split('/').slice(1 + segmentCount).join('/')
+      var query = l.search ? '&' + l.search.slice(1).replace(/&/g, '~and~') : ''
+      l.replace(
+        l.protocol +
+          '//' +
+          l.hostname +
+          (l.port ? ':' + l.port : '') +
+          base +
+          '/?/' +
+          path.replace(/&/g, '~and~') +
+          query +
+          l.hash,
+      )
+    </script>
+  </head>
+  <body></body>
+</html>
