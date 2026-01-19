@@ -26,7 +26,7 @@ const mapProduct = (row) => ({
 const mapCategory = (row) => ({
   title: row.name,
   image: row.image_url,
-  to: row.slug ? `/collections/${row.slug}` : '/collections/hoodies',
+  to: row.slug ? `/collections/${row.slug}` : '/collections/wallets',
 })
 
 const getCatalogFromDb = async () => {

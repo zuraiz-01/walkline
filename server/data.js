@@ -2,12 +2,12 @@ export const catalog = {
   brand: 'Walkline',
   announcement: [
     'Welcome to Walkline',
-    'Streetwear essentials for everyday wear',
+    'Wallets and keychains for everyday carry',
     'Free shipping over Rs. 10000.',
   ],
   nav: [
-    { label: 'Hoodies', to: '/collections/hoodies' },
-    { label: 'SweatShirts', to: '/collections/sweatshirts' },
+    { label: 'Wallets', to: '/collections/wallets' },
+    { label: 'Keychains', to: '/collections/keychains' },
     { label: 'Reviews', to: '/reviews' },
     { label: 'About Us', to: '/about' },
     { label: 'Contact', to: '/contact' },
@@ -15,228 +15,195 @@ export const catalog = {
   ],
   hero: {
     kicker: 'Walkline Studio',
-    title: 'Built for bold fits and all-day comfort.',
+    title: 'Premium wallets and keychains for everyday carry.',
     description:
-      'Baggy silhouettes, premium fleece, and clean seams designed for the everyday rotation.',
-    primaryCta: { label: 'Shop Hoodies', to: '/collections/hoodies' },
-    secondaryCta: { label: 'Explore SweatShirts', to: '/collections/sweatshirts' },
-    highlights: ['320 GSM premium cotton', 'Relaxed baggy fit', 'Easy returns'],
-    image:
-      'https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?auto=format&fit=crop&w=900&q=80',
+      'Full-grain leather, clean stitching, and durable hardware built for your daily essentials.',
+    primaryCta: { label: 'Shop Wallets', to: '/collections/wallets' },
+    secondaryCta: { label: 'Explore Keychains', to: '/collections/keychains' },
+    highlights: ['Full-grain leather', 'Precision stitching', 'Everyday carry'],
+    image: '/images/hero-wallet.jpg',
     tiles: [
-      { tag: 'SAVE 10%', title: 'Colour Spotlight', copy: 'Limited time offer.' },
-      { tag: 'NEW DROP', title: 'Everyday Luxury', copy: 'Soft brushed fleece.' },
+      { tag: 'SAVE 10%', title: 'Travel Wallets', copy: 'Limited time offer.' },
+      { tag: 'NEW DROP', title: 'Keychain Series', copy: 'Minimal hardware, bold finish.' },
     ],
   },
   categories: [
     {
-      title: 'Plain Hoodies',
-      image:
-        'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=800&q=80',
-      to: '/collections/hoodies',
+      title: 'Leather Wallets',
+      image: '/images/category-wallets.jpg',
+      to: '/collections/wallets',
     },
     {
-      title: 'Graphic Hoodies',
-      image:
-        'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=800&q=80',
-      to: '/collections/hoodies',
+      title: 'Slim Card Holders',
+      image: '/images/category-cardholders.jpg',
+      to: '/collections/wallets',
     },
     {
-      title: 'Embroided SweatShirts',
-      image:
-        'https://images.unsplash.com/photo-1503341455253-b2e723bb3dbb?auto=format&fit=crop&w=800&q=80',
-      to: '/collections/sweatshirts',
+      title: 'Travel Wallets',
+      image: '/images/category-travel.jpg',
+      to: '/collections/wallets',
     },
     {
-      title: 'Graphic SweatShirts',
-      image:
-        'https://images.unsplash.com/photo-1460353581641-37baddab0fa2?auto=format&fit=crop&w=800&q=80',
-      to: '/collections/sweatshirts',
+      title: 'Keychains',
+      image: '/images/category-keychains.jpg',
+      to: '/collections/keychains',
     },
   ],
   products: [
     {
-      name: 'White Embroided Sweat Shirt - Baggy Fit',
+      name: 'Classic Leather Wallet - Black',
       price: 'Rs.2,450.00',
-      compareAt: 'Rs.3,500.00',
-      tag: 'Save 30%',
-      image:
-        'https://images.unsplash.com/photo-1512436991641-6745cdb1723f?auto=format&fit=crop&w=800&q=80',
-      hoverImage:
-        'https://images.unsplash.com/photo-1521577352947-9bb58764b69a?auto=format&fit=crop&w=800&q=80',
+      compareAt: 'Rs.3,200.00',
+      tag: 'Save 25%',
+      image: '/images/products/wallet-classic.jpg',
+      hoverImage: '/images/products/wallet-classic.jpg',
     },
     {
-      name: 'Classic Heart Black Sweat Shirt | Relaxed Fit',
+      name: 'Slim Card Holder - Tan',
       price: 'Rs.1,550.00',
-      compareAt: 'Rs.2,230.00',
+      compareAt: 'Rs.2,100.00',
       tag: 'New',
-      image:
-        'https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?auto=format&fit=crop&w=800&q=80',
-      hoverImage:
-        'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=800&q=80',
+      image: '/images/products/wallet-slim.jpg',
+      hoverImage: '/images/products/wallet-slim.jpg',
     },
     {
-      name: 'Classic Dark Brown Plain Hoodie - Baggy Fit',
-      price: 'Rs.2,450.00',
-      compareAt: 'Rs.3,500.00',
+      name: 'Bifold Wallet - Walnut',
+      price: 'Rs.2,799.00',
+      compareAt: 'Rs.3,800.00',
       tag: 'Best seller',
-      image:
-        'https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=800&q=80',
-      hoverImage:
-        'https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?auto=format&fit=crop&w=800&q=80',
+      image: '/images/products/wallet-bifold.jpg',
+      hoverImage: '/images/products/wallet-bifold.jpg',
     },
     {
-      name: 'Fall in love Black Graphic Hoodie - Baggy Fit',
-      price: 'Rs.2,799.00',
-      compareAt: 'Rs.4,000.00',
+      name: 'Zip Coin Wallet - Espresso',
+      price: 'Rs.1,350.00',
+      compareAt: 'Rs.1,900.00',
       tag: 'Sale',
-      image:
-        'https://images.unsplash.com/photo-1503341455253-b2e723bb3dbb?auto=format&fit=crop&w=800&q=80',
-      hoverImage:
-        'https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?auto=format&fit=crop&w=800&q=80',
+      image: '/images/products/wallet-zip.jpg',
+      hoverImage: '/images/products/wallet-zip.jpg',
     },
     {
-      name: 'Deep Thought Beige Color Graphic Hoodie - Baggy Fit',
-      price: 'Rs.2,799.00',
-      compareAt: 'Rs.4,000.00',
+      name: 'Travel Wallet - Mocha',
+      price: 'Rs.3,200.00',
+      compareAt: 'Rs.4,200.00',
       tag: 'Trending',
-      image:
-        'https://images.unsplash.com/photo-1514996937319-344454492b37?auto=format&fit=crop&w=800&q=80',
-      hoverImage:
-        'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=800&q=80',
+      image: '/images/products/wallet-travel.jpg',
+      hoverImage: '/images/products/wallet-travel.jpg',
     },
     {
-      name: 'Classic White Plain Hoodie - Baggy Fit',
-      price: 'Rs.2,450.00',
-      compareAt: 'Rs.3,500.00',
+      name: 'Minimalist Wallet - Grey',
+      price: 'Rs.1,950.00',
+      compareAt: 'Rs.2,600.00',
       tag: 'Restock',
-      image:
-        'https://images.unsplash.com/photo-1503341455253-b2e723bb3dbb?auto=format&fit=crop&w=800&q=80',
-      hoverImage:
-        'https://images.unsplash.com/photo-1521577352947-9bb58764b69a?auto=format&fit=crop&w=800&q=80',
+      image: '/images/products/wallet-minimal.jpg',
+      hoverImage: '/images/products/wallet-minimal.jpg',
     },
     {
-      name: 'Classic Black Plain Hoodie - Baggy Fit',
-      price: 'Rs.2,450.00',
-      compareAt: 'Rs.3,500.00',
-      tag: 'Save 30%',
-      image:
-        'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=800&q=80',
-      hoverImage:
-        'https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=800&q=80',
+      name: 'Braided Leather Keychain - Black',
+      price: 'Rs.850.00',
+      compareAt: 'Rs.1,200.00',
+      tag: 'New',
+      image: '/images/products/keychain-braided.jpg',
+      hoverImage: '/images/products/keychain-braided.jpg',
     },
     {
-      name: 'Its Ending Black Graphic Hoodie - Baggy Fit',
-      price: 'Rs.2,799.00',
-      compareAt: 'Rs.4,000.00',
+      name: 'Metal Keychain Loop - Gunmetal',
+      price: 'Rs.650.00',
+      compareAt: 'Rs.900.00',
       tag: 'Sale',
-      image:
-        'https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?auto=format&fit=crop&w=800&q=80',
-      hoverImage:
-        'https://images.unsplash.com/photo-1512436991641-6745cdb1723f?auto=format&fit=crop&w=800&q=80',
+      image: '/images/products/keychain-metal.jpg',
+      hoverImage: '/images/products/keychain-metal.jpg',
     },
   ],
   promos: [
     {
       tag: 'SAVE 10%',
-      title: 'Colour Spotlight',
-      copy: 'In-store. Limited time offer.',
-      image:
-        'https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=900&q=80',
+      title: 'Wallet Essentials',
+      copy: 'Limited-time pricing on daily carry staples.',
+      image: '/images/promo-wallet.jpg',
     },
     {
       tag: 'NEW IN',
-      title: "Hello! Everyday for Men's",
-      copy: 'Relaxed fits for daily wear.',
-      image:
-        'https://images.unsplash.com/photo-1521577352947-9bb58764b69a?auto=format&fit=crop&w=900&q=80',
+      title: 'Keychain Atelier',
+      copy: 'Fresh hardware finishes and minimal straps.',
+      image: '/images/promo-keychain.jpg',
     },
     {
       tag: 'SIGNATURE',
-      title: 'Everyday Luxury',
-      copy: 'Clean seams and premium fleece.',
-      image:
-        'https://images.unsplash.com/photo-1503341455253-b2e723bb3dbb?auto=format&fit=crop&w=900&q=80',
+      title: 'Everyday Carry',
+      copy: 'Clean lines and premium leather texture.',
+      image: '/images/promo-everyday.jpg',
     },
   ],
   trending: [
     {
-      name: 'Deep Thought Beige Color Graphic Hoodie - Baggy Fit',
-      price: 'Rs.2,799.00',
-      compareAt: 'Rs.4,000.00',
+      name: 'Travel Wallet - Mocha',
+      price: 'Rs.3,200.00',
+      compareAt: 'Rs.4,200.00',
       tag: 'Hot',
-      image:
-        'https://images.unsplash.com/photo-1514996937319-344454492b37?auto=format&fit=crop&w=800&q=80',
-      hoverImage:
-        'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=800&q=80',
+      image: '/images/products/wallet-travel.jpg',
+      hoverImage: '/images/products/wallet-travel.jpg',
     },
     {
-      name: 'Classic Black Plain Hoodie - Baggy Fit',
+      name: 'Classic Leather Wallet - Black',
       price: 'Rs.2,450.00',
-      compareAt: 'Rs.3,500.00',
+      compareAt: 'Rs.3,200.00',
       tag: 'Trending',
-      image:
-        'https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?auto=format&fit=crop&w=800&q=80',
-      hoverImage:
-        'https://images.unsplash.com/photo-1512436991641-6745cdb1723f?auto=format&fit=crop&w=800&q=80',
+      image: '/images/products/wallet-classic.jpg',
+      hoverImage: '/images/products/wallet-classic.jpg',
     },
     {
-      name: 'Classic White Plain Hoodie - Baggy Fit',
-      price: 'Rs.2,450.00',
-      compareAt: 'Rs.3,500.00',
+      name: 'Braided Leather Keychain - Black',
+      price: 'Rs.850.00',
+      compareAt: 'Rs.1,200.00',
       tag: 'Restock',
-      image:
-        'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=800&q=80',
-      hoverImage:
-        'https://images.unsplash.com/photo-1521577352947-9bb58764b69a?auto=format&fit=crop&w=800&q=80',
+      image: '/images/products/keychain-braided.jpg',
+      hoverImage: '/images/products/keychain-braided.jpg',
     },
     {
-      name: 'Fall in love Black Graphic Hoodie - Baggy Fit',
-      price: 'Rs.2,799.00',
-      compareAt: 'Rs.4,000.00',
+      name: 'Minimalist Wallet - Grey',
+      price: 'Rs.1,950.00',
+      compareAt: 'Rs.2,600.00',
       tag: 'Sale',
-      image:
-        'https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=800&q=80',
-      hoverImage:
-        'https://images.unsplash.com/photo-1503341455253-b2e723bb3dbb?auto=format&fit=crop&w=800&q=80',
+      image: '/images/products/wallet-minimal.jpg',
+      hoverImage: '/images/products/wallet-minimal.jpg',
     },
   ],
-  marquee: ['Walkline', 'Premium Hoodies', 'Everyday Luxury', 'Baggy Fit'],
+  marquee: ['Leather Wallets', 'Keychains', 'Everyday Carry', 'Handcrafted'],
   testimonials: [
     {
       quote:
-        'The fleece is super soft and the fit sits just right. Feels premium.',
+        'The leather feels premium and the stitching is super clean. Worth it.',
       name: 'Hania A.',
       title: 'Karachi',
     },
     {
-      quote: 'Quality is solid and the stitch work looks clean.',
+      quote: 'Wallet feels solid and the finish looks sharp.',
       name: 'Saad R.',
       title: 'Lahore',
     },
     {
-      quote: 'Fast delivery, great packaging, and the hoodie feels heavy.',
+      quote: 'Love the keychain hardware and the smooth leather strap.',
       name: 'Maham I.',
       title: 'Islamabad',
     },
   ],
   story: {
     title:
-      'Timeless designs, premium fabrics, and effortless wearability. Essentials you reach for every day.',
-    image:
-      'https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?auto=format&fit=crop&w=1400&q=80',
+      'Timeless design, premium leather, and smooth edges. Essentials you carry every day.',
+    image: '/images/story-leather.jpg',
   },
   newsletter: {
-    title: 'Get drop alerts and early access.',
-    copy: 'Join the Walkline list for new arrivals, restocks, and offers.',
+    title: 'Get new wallet drops and keychain launches first.',
+    copy: 'Join the Walkline list for releases, restocks, and offers.',
   },
   footer: {
     columns: [
       {
         title: 'Shop',
         links: [
-          { label: 'Hoodies', to: '/collections/hoodies' },
-          { label: 'SweatShirts', to: '/collections/sweatshirts' },
+          { label: 'Wallets', to: '/collections/wallets' },
+          { label: 'Keychains', to: '/collections/keychains' },
           { label: 'Best Selling', to: '/' },
           { label: 'Trending', to: '/' },
         ],
@@ -255,7 +222,7 @@ export const catalog = {
         links: [
           { label: 'About Us', to: '/about' },
           { label: 'Reviews', to: '/reviews' },
-          { label: 'Size Guide', to: '/about' },
+          { label: 'Care Guide', to: '/about' },
           { label: 'Careers', to: '/about' },
         ],
       },
