@@ -11,6 +11,17 @@ import logoBlack from './assets/walkline-logo-black.jpeg'
 import logoWhite from './assets/walkline-logo-white.jpeg'
 import './App.css'
 
+const withBase = (value) => {
+  if (!value) {
+    return value
+  }
+  if (/^https?:\/\//i.test(value)) {
+    return value
+  }
+  const base = import.meta.env.BASE_URL || '/'
+  return `${base}${value.replace(/^\\//, '')}`
+}
+
 const fallbackCatalog = {
   brand: 'Walkline',
   announcement: [
@@ -382,7 +393,7 @@ const HomePage = ({ catalog }) => (
       </div>
       <div className="hero-visual">
         <div className="hero-image">
-          <img src={catalog.hero.image} alt="Walkline featured" />
+          <img src={withBase(catalog.hero.image)} alt="Walkline featured" />
         </div>
         <div className="hero-tiles">
           {catalog.hero.tiles.map((tile, index) => (
@@ -418,7 +429,7 @@ const HomePage = ({ catalog }) => (
             to={category.to}
             style={{ '--delay': `${index * 0.08}s` }}
           >
-            <img src={category.image} alt={category.title} />
+            <img src={withBase(category.image)} alt={category.title} />
             <span className="category-label">{category.title}</span>
           </Link>
         ))}
@@ -443,10 +454,14 @@ const HomePage = ({ catalog }) => (
             style={{ '--delay': `${index * 0.05}s` }}
           >
             <div className="product-media">
-              <img className="primary" src={product.image} alt={product.name} />
+              <img
+                className="primary"
+                src={withBase(product.image)}
+                alt={product.name}
+              />
               <img
                 className="secondary"
-                src={product.hoverImage}
+                src={withBase(product.hoverImage)}
                 alt={`${product.name} alternate`}
               />
               <span className="badge">{product.tag}</span>
@@ -471,7 +486,7 @@ const HomePage = ({ catalog }) => (
             className="promo-card fade-up"
             style={{ '--delay': `${index * 0.08}s` }}
           >
-            <img src={promo.image} alt={promo.title} />
+            <img src={withBase(promo.image)} alt={promo.title} />
             <div className="promo-overlay" />
             <div className="promo-content">
               <span className="promo-tag">{promo.tag}</span>
@@ -504,10 +519,14 @@ const HomePage = ({ catalog }) => (
             style={{ '--delay': `${index * 0.05}s` }}
           >
             <div className="product-media">
-              <img className="primary" src={product.image} alt={product.name} />
+              <img
+                className="primary"
+                src={withBase(product.image)}
+                alt={product.name}
+              />
               <img
                 className="secondary"
-                src={product.hoverImage}
+                src={withBase(product.hoverImage)}
                 alt={`${product.name} alternate`}
               />
               <span className="badge">{product.tag}</span>
@@ -536,7 +555,7 @@ const HomePage = ({ catalog }) => (
 
     <section className="section story" id="story">
       <div className="story-media">
-        <img src={catalog.story.image} alt="Walkline story" />
+        <img src={withBase(catalog.story.image)} alt="Walkline story" />
         <div className="story-overlay" />
         <div className="story-content">
           <p className="section-kicker">Walkline essentials</p>
@@ -639,10 +658,14 @@ const CollectionPage = ({ catalog }) => {
               style={{ '--delay': `${index * 0.05}s` }}
             >
               <div className="product-media">
-                <img className="primary" src={product.image} alt={product.name} />
+                <img
+                  className="primary"
+                  src={withBase(product.image)}
+                  alt={product.name}
+                />
                 <img
                   className="secondary"
-                  src={product.hoverImage}
+                  src={withBase(product.hoverImage)}
                   alt={`${product.name} alternate`}
                 />
                 <span className="badge">{product.tag}</span>
