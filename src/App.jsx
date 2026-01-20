@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+﻿import { useEffect, useMemo, useState } from 'react'
 import {
   Link,
   NavLink,
@@ -787,10 +787,16 @@ const HomePage = ({ catalog, onAddToCart, onToggleWishlist, wishlistKeys }) => (
   <>
     <section className="hero">
       <div className="hero-content">
-        <p className="kicker">{catalog.hero.kicker}</p>
-        <h1>{catalog.hero.title}</h1>
-        <p className="hero-description">{catalog.hero.description}</p>
-        <div className="hero-actions">
+        <p className="kicker fade-up" style={{ '--delay': '0s' }}>
+          {catalog.hero.kicker}
+        </p>
+        <h1 className="fade-up" style={{ '--delay': '0.05s' }}>
+          {catalog.hero.title}
+        </h1>
+        <p className="hero-description fade-up" style={{ '--delay': '0.12s' }}>
+          {catalog.hero.description}
+        </p>
+        <div className="hero-actions fade-up" style={{ '--delay': '0.18s' }}>
           <Link className="button" to={catalog.hero.primaryCta.to}>
             {catalog.hero.primaryCta.label}
           </Link>
@@ -799,15 +805,19 @@ const HomePage = ({ catalog, onAddToCart, onToggleWishlist, wishlistKeys }) => (
           </Link>
         </div>
         <div className="hero-highlights">
-          {catalog.hero.highlights.map((item) => (
-            <span key={item} className="hero-pill">
+          {catalog.hero.highlights.map((item, index) => (
+            <span
+              key={item}
+              className="hero-pill fade-up"
+              style={{ '--delay': `${0.24 + index * 0.05}s` }}
+            >
               {item}
             </span>
           ))}
         </div>
       </div>
       <div className="hero-visual">
-        <div className="hero-image">
+        <div className="hero-image fade-up" style={{ '--delay': '0.08s' }}>
           <img src={withBase(catalog.hero.image)} alt="Walkline featured" />
         </div>
         <div className="hero-tiles">
@@ -1125,7 +1135,7 @@ const ContactPage = () => (
     <section className="page-hero">
       <div>
         <p className="kicker">Contact</p>
-        <h1>Let’s talk Walkline.</h1>
+        <h1>Letâ€™s talk Walkline.</h1>
         <p className="hero-description">
           Reach out for materials, custom orders, or collaborations.
         </p>
@@ -1238,6 +1248,7 @@ const NotFoundPage = () => (
 )
 
 function App() {
+  const navigate = useNavigate()
   const [catalog, setCatalog] = useState(fallbackCatalog)
   const [cart, setCart] = useState(() => readStorage('walkline.cart', {}))
   const [wishlist, setWishlist] = useState(() => readStorage('walkline.wishlist', []))
@@ -1299,6 +1310,22 @@ function App() {
     })
   }
 
+  const handlePlaceOrder = (details) => {
+    writeStorage('walkline.lastOrder', {
+      id: `${Date.now()}`,
+      createdAt: new Date().toISOString(),
+      details,
+      items: cartItems.map((item) => ({
+        name: item.name,
+        quantity: item.quantity,
+        price: item.product?.price ?? null,
+      })),
+    })
+    setCart({})
+    setIsCartOpen(false)
+    navigate('/checkout/success')
+  }
+
   const handleToggleWishlist = (product) => {
     const key = productKey(product)
     if (!key) {
@@ -1321,6 +1348,33 @@ function App() {
   useEffect(() => {
     writeStorage('walkline.wishlist', wishlist)
   }, [wishlist])
+
+  useEffect(() => {
+    const items = Array.from(document.querySelectorAll('.fade-up'))
+    if (!items.length) {
+      return
+    }
+
+    if (window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches) {
+      items.forEach((item) => item.classList.add('is-visible'))
+      return
+    }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('is-visible')
+            observer.unobserve(entry.target)
+          }
+        })
+      },
+      { root: null, threshold: 0.12, rootMargin: '0px 0px -10% 0px' },
+    )
+
+    items.forEach((item) => observer.observe(item))
+    return () => observer.disconnect()
+  }, [catalog])
 
   useEffect(() => {
     let cancelled = false
@@ -1422,6 +1476,14 @@ function App() {
         ) : (
           <p className="muted">Your cart is empty.</p>
         )}
+        <div className="drawer-footer">
+          <Link className="button" to="/cart" onClick={() => setIsCartOpen(false)}>
+            View cart
+          </Link>
+          <Link className="button ghost" to="/checkout" onClick={() => setIsCartOpen(false)}>
+            Checkout
+          </Link>
+        </div>
       </Drawer>
 
       <Drawer title="Wishlist" open={isWishlistOpen} onClose={() => setIsWishlistOpen(false)}>
@@ -1464,6 +1526,11 @@ function App() {
         ) : (
           <p className="muted">Your wishlist is empty.</p>
         )}
+        <div className="drawer-footer">
+          <Link className="button" to="/wishlist" onClick={() => setIsWishlistOpen(false)}>
+            View wishlist
+          </Link>
+        </div>
       </Drawer>
 
       <main className="page-main">
@@ -1488,6 +1555,48 @@ function App() {
                 onToggleWishlist={handleToggleWishlist}
                 wishlistKeys={wishlistKeys}
               />
+            )}
+          />
+          <Route
+            path="/cart"
+            element={(
+              <CartPage
+                cartItems={cartItems}
+                onSetQuantity={handleSetCartQuantity}
+                onCheckout={() => navigate('/checkout')}
+                onCloseDrawer={() => navigate('/')}
+              />
+            )}
+          />
+          <Route
+            path="/wishlist"
+            element={(
+              <WishlistPage
+                wishlist={wishlist}
+                productIndex={productIndex}
+                onAddToCart={handleAddToCart}
+                onRemove={handleRemoveFromWishlist}
+                onCloseDrawer={() => navigate('/')}
+              />
+            )}
+          />
+          <Route
+            path="/checkout"
+            element={<CheckoutPage cartItems={cartItems} onPlaceOrder={handlePlaceOrder} />}
+          />
+          <Route
+            path="/checkout/success"
+            element={(
+              <section className="section page-section">
+                <div className="page-hero-card">
+                  <span className="pill">Order placed</span>
+                  <h3>Thank you!</h3>
+                  <p className="muted">Your order has been recorded. We’ll contact you soon.</p>
+                  <button className="button" type="button" onClick={() => navigate('/')}>
+                    Back to home
+                  </button>
+                </div>
+              </section>
             )}
           />
           <Route path="/about" element={<AboutPage />} />
