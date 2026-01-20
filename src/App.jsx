@@ -1,10 +1,11 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import {
   Link,
   NavLink,
   Route,
   Routes,
   useLocation,
+  useNavigate,
   useParams,
 } from 'react-router-dom'
 import logoBlack from './assets/walkline-logo-black.jpeg'
@@ -19,8 +20,39 @@ const withBase = (value) => {
     return value
   }
   const base = import.meta.env.BASE_URL || '/'
-  return `${base}${value.replace(/^\\//, '')}`
+  return `${base}${value.replace(/^\//, '')}`
 }
+
+const readStorage = (key, fallback) => {
+  try {
+    const raw = localStorage.getItem(key)
+    if (!raw) {
+      return fallback
+    }
+    return JSON.parse(raw)
+  } catch {
+    return fallback
+  }
+}
+
+const writeStorage = (key, value) => {
+  try {
+    localStorage.setItem(key, JSON.stringify(value))
+  } catch {}
+}
+
+const productKey = (product) => product?.name ?? ''
+
+const parseRs = (value) => {
+  if (!value) {
+    return 0
+  }
+  const raw = String(value).replace(/Rs\.?/gi, '').replace(/,/g, '').trim()
+  const parsed = Number.parseFloat(raw)
+  return Number.isFinite(parsed) ? parsed : 0
+}
+
+const formatRs = (amount) => `Rs.${Number(amount || 0).toFixed(2)}`
 
 const fallbackCatalog = {
   brand: 'Walkline',
@@ -284,7 +316,13 @@ const ScrollToTop = () => {
   return null
 }
 
-const Header = ({ nav }) => (
+const Header = ({
+  nav,
+  cartCount,
+  wishlistCount,
+  onOpenCart,
+  onOpenWishlist,
+}) => (
   <header className="site-header">
     <div className="header-inner">
       <Link className="logo-link" to="/" aria-label="Walkline home">
@@ -318,13 +356,36 @@ const Header = ({ nav }) => (
             />
           </svg>
         </button>
-        <button className="icon-button" type="button" aria-label="Cart">
+        <button
+          className="icon-button"
+          type="button"
+          aria-label="Wishlist"
+          onClick={onOpenWishlist}
+        >
+          <HeartIcon filled={wishlistCount > 0} />
+          {wishlistCount > 0 ? (
+            <span className="icon-badge" aria-label={`${wishlistCount} items in wishlist`}>
+              {wishlistCount}
+            </span>
+          ) : null}
+        </button>
+        <button
+          className="icon-button"
+          type="button"
+          aria-label="Cart"
+          onClick={onOpenCart}
+        >
           <svg viewBox="0 0 24 24" aria-hidden="true">
             <path
               d="M6 7h14l-1.5 9.5a2 2 0 0 1-2 1.5H9.5a2 2 0 0 1-2-1.5L6 7Zm2.2-3h7.6l1 2H7.2l1-2Z"
               fill="currentColor"
             />
           </svg>
+          {cartCount > 0 ? (
+            <span className="icon-badge" aria-label={`${cartCount} items in cart`}>
+              {cartCount}
+            </span>
+          ) : null}
         </button>
         <button className="menu-button" type="button">
           Menu
@@ -333,6 +394,360 @@ const Header = ({ nav }) => (
     </div>
   </header>
 )
+
+const HeartIcon = ({ filled }) => (
+  <svg
+    viewBox="0 0 24 24"
+    width="18"
+    height="18"
+    aria-hidden="true"
+    focusable="false"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+  >
+    <path
+      d="M20.8 4.6c-1.7-1.7-4.4-1.7-6.1 0L12 7.3 9.3 4.6C7.6 2.9 4.9 2.9 3.2 4.6c-1.7 1.7-1.7 4.4 0 6.1L12 19.5l8.8-8.8c1.7-1.7 1.7-4.4 0-6.1Z"
+      fill={filled ? 'currentColor' : 'none'}
+    />
+  </svg>
+)
+
+const ProductCard = ({ product, index, onAddToCart, onToggleWishlist, wishlisted }) => (
+  <article
+    className="product-card fade-up"
+    style={{ '--delay': `${index * 0.05}s` }}
+  >
+    <div className="product-media">
+      <img className="primary" src={withBase(product.image)} alt={product.name} />
+      <img
+        className="secondary"
+        src={withBase(product.hoverImage)}
+        alt={`${product.name} alternate`}
+      />
+      <span className="badge">{product.tag}</span>
+      <button
+        className={`wishlist-button ${wishlisted ? 'active' : ''}`}
+        type="button"
+        onClick={() => onToggleWishlist(product)}
+        aria-label={wishlisted ? 'Remove from wishlist' : 'Add to wishlist'}
+      >
+        <HeartIcon filled={wishlisted} />
+      </button>
+    </div>
+    <div className="product-info">
+      <h3>{product.name}</h3>
+      <div className="product-price">
+        <span className="current">{product.price}</span>
+        <span className="compare">{product.compareAt}</span>
+      </div>
+      <div className="product-actions">
+        <button className="button small" type="button" onClick={() => onAddToCart(product)}>
+          Add to cart
+        </button>
+      </div>
+    </div>
+  </article>
+)
+
+const Drawer = ({ title, open, onClose, children }) => {
+  useEffect(() => {
+    if (!open) {
+      return
+    }
+
+    const onKeyDown = (event) => {
+      if (event.key === 'Escape') {
+        onClose()
+      }
+    }
+
+    window.addEventListener('keydown', onKeyDown)
+    return () => window.removeEventListener('keydown', onKeyDown)
+  }, [open, onClose])
+
+  if (!open) {
+    return null
+  }
+
+  return (
+    <div className="drawer-overlay" role="presentation" onClick={onClose}>
+      <aside
+        className="drawer"
+        role="dialog"
+        aria-modal="true"
+        aria-label={title}
+        onClick={(event) => event.stopPropagation()}
+      >
+        <div className="drawer-header">
+          <h3>{title}</h3>
+          <button className="icon-button" type="button" aria-label="Close" onClick={onClose}>
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path
+                d="M18 6 6 18M6 6l12 12"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+              />
+            </svg>
+          </button>
+        </div>
+        <div className="drawer-body">{children}</div>
+      </aside>
+    </div>
+  )
+}
+
+const CartPage = ({ cartItems, onSetQuantity, onCloseDrawer, onCheckout }) => (
+  <section className="section page-section">
+    <div className="section-header">
+      <div>
+        <p className="section-kicker">Cart</p>
+        <h2>Your cart</h2>
+      </div>
+    </div>
+
+    {cartItems.length ? (
+      <div className="checkout-layout">
+        <div className="checkout-main">
+          <div className="drawer-list">
+            {cartItems.map(({ name, quantity, product }) => (
+              <div className="drawer-item" key={name}>
+                <div className="drawer-item-media">
+                  {product?.image ? (
+                    <img src={withBase(product.image)} alt={name} />
+                  ) : (
+                    <div className="drawer-item-placeholder" aria-hidden="true" />
+                  )}
+                </div>
+                <div className="drawer-item-info">
+                  <strong>{name}</strong>
+                  <div className="drawer-item-meta">
+                    {product?.price ? <span className="muted">{product.price}</span> : null}
+                  </div>
+                  <div className="drawer-item-actions">
+                    <div className="qty">
+                      <button
+                        type="button"
+                        className="qty-button"
+                        onClick={() => onSetQuantity(name, quantity - 1)}
+                        aria-label="Decrease quantity"
+                      >
+                        −
+                      </button>
+                      <span className="qty-value" aria-label={`Quantity ${quantity}`}>
+                        {quantity}
+                      </span>
+                      <button
+                        type="button"
+                        className="qty-button"
+                        onClick={() => onSetQuantity(name, quantity + 1)}
+                        aria-label="Increase quantity"
+                      >
+                        +
+                      </button>
+                    </div>
+                    <button type="button" className="text-link" onClick={() => onSetQuantity(name, 0)}>
+                      Remove
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <aside className="checkout-summary">
+          <div className="summary-card">
+            <h3>Order summary</h3>
+            <div className="summary-row">
+              <span className="muted">Items</span>
+              <strong>{cartItems.reduce((sum, item) => sum + item.quantity, 0)}</strong>
+            </div>
+            <div className="summary-row">
+              <span className="muted">Subtotal</span>
+              <strong>
+                {formatRs(
+                  cartItems.reduce(
+                    (sum, item) => sum + parseRs(item.product?.price) * item.quantity,
+                    0,
+                  ),
+                )}
+              </strong>
+            </div>
+            <p className="muted summary-note">Shipping and discounts calculated at checkout.</p>
+            <div className="summary-actions">
+              <button className="button" type="button" onClick={onCheckout}>
+                Checkout
+              </button>
+              <button className="button ghost" type="button" onClick={onCloseDrawer}>
+                Continue shopping
+              </button>
+            </div>
+          </div>
+        </aside>
+      </div>
+    ) : (
+      <div className="page-hero-card">
+        <h3>Cart is empty</h3>
+        <p className="muted">Add something first, then come back to checkout.</p>
+        <button className="button" type="button" onClick={onCloseDrawer}>
+          Shop products
+        </button>
+      </div>
+    )}
+  </section>
+)
+
+const WishlistPage = ({ wishlist, productIndex, onAddToCart, onRemove, onCloseDrawer }) => (
+  <section className="section page-section">
+    <div className="section-header">
+      <div>
+        <p className="section-kicker">Wishlist</p>
+        <h2>Your wishlist</h2>
+      </div>
+    </div>
+
+    {wishlist.length ? (
+      <div className="drawer-list">
+        {wishlist.map((name) => {
+          const product = productIndex.get(name) ?? null
+          return (
+            <div className="drawer-item" key={name}>
+              <div className="drawer-item-media">
+                {product?.image ? (
+                  <img src={withBase(product.image)} alt={name} />
+                ) : (
+                  <div className="drawer-item-placeholder" aria-hidden="true" />
+                )}
+              </div>
+              <div className="drawer-item-info">
+                <strong>{name}</strong>
+                <div className="drawer-item-meta">
+                  {product?.price ? <span className="muted">{product.price}</span> : null}
+                </div>
+                <div className="drawer-item-actions">
+                  <button
+                    type="button"
+                    className="button small"
+                    onClick={() => product && onAddToCart(product)}
+                    disabled={!product}
+                  >
+                    Add to cart
+                  </button>
+                  <button type="button" className="text-link" onClick={() => onRemove(name)}>
+                    Remove
+                  </button>
+                </div>
+              </div>
+            </div>
+          )
+        })}
+      </div>
+    ) : (
+      <div className="page-hero-card">
+        <h3>Wishlist is empty</h3>
+        <p className="muted">Tap the heart on any product to save it.</p>
+        <button className="button" type="button" onClick={onCloseDrawer}>
+          Browse products
+        </button>
+      </div>
+    )}
+  </section>
+)
+
+const CheckoutPage = ({ cartItems, onPlaceOrder }) => {
+  const [status, setStatus] = useState('')
+
+  const subtotal = useMemo(
+    () =>
+      cartItems.reduce((sum, item) => sum + parseRs(item.product?.price) * item.quantity, 0),
+    [cartItems],
+  )
+
+  return (
+    <section className="section page-section">
+      <div className="section-header">
+        <div>
+          <p className="section-kicker">Checkout</p>
+          <h2>Checkout</h2>
+        </div>
+      </div>
+
+      <div className="checkout-layout">
+        <div className="checkout-main">
+          <div className="form-card">
+            <h3>Delivery details</h3>
+            <form
+              className="checkout-form"
+              onSubmit={(event) => {
+                event.preventDefault()
+                if (!cartItems.length) {
+                  setStatus('Cart is empty.')
+                  return
+                }
+                setStatus('')
+                const data = new FormData(event.currentTarget)
+                onPlaceOrder({
+                  name: data.get('name')?.toString() ?? '',
+                  phone: data.get('phone')?.toString() ?? '',
+                  address: data.get('address')?.toString() ?? '',
+                  city: data.get('city')?.toString() ?? '',
+                  payment: data.get('payment')?.toString() ?? 'cod',
+                })
+              }}
+            >
+              <div className="field-grid">
+                <label className="field">
+                  <span>Full name</span>
+                  <input name="name" type="text" required />
+                </label>
+                <label className="field">
+                  <span>Phone</span>
+                  <input name="phone" type="tel" required />
+                </label>
+              </div>
+              <label className="field">
+                <span>Address</span>
+                <input name="address" type="text" required />
+              </label>
+              <label className="field">
+                <span>City</span>
+                <input name="city" type="text" required />
+              </label>
+              <label className="field">
+                <span>Payment</span>
+                <select name="payment" defaultValue="cod">
+                  <option value="cod">Cash on delivery</option>
+                </select>
+              </label>
+              <button className="button" type="submit">
+                Place order
+              </button>
+              {status ? <p className="status-card">{status}</p> : null}
+            </form>
+          </div>
+        </div>
+
+        <aside className="checkout-summary">
+          <div className="summary-card">
+            <h3>Order summary</h3>
+            <div className="summary-row">
+              <span className="muted">Items</span>
+              <strong>{cartItems.reduce((sum, item) => sum + item.quantity, 0)}</strong>
+            </div>
+            <div className="summary-row">
+              <span className="muted">Subtotal</span>
+              <strong>{formatRs(subtotal)}</strong>
+            </div>
+            <p className="muted summary-note">Demo checkout: order is saved locally.</p>
+          </div>
+        </aside>
+      </div>
+    </section>
+  )
+}
 
 const Footer = ({ footer }) => (
   <footer className="site-footer" id="footer">
@@ -368,7 +783,7 @@ const Footer = ({ footer }) => (
   </footer>
 )
 
-const HomePage = ({ catalog }) => (
+const HomePage = ({ catalog, onAddToCart, onToggleWishlist, wishlistKeys }) => (
   <>
     <section className="hero">
       <div className="hero-content">
@@ -448,32 +863,14 @@ const HomePage = ({ catalog }) => (
       </div>
       <div className="product-grid">
         {catalog.products.map((product, index) => (
-          <article
+          <ProductCard
             key={product.name}
-            className="product-card fade-up"
-            style={{ '--delay': `${index * 0.05}s` }}
-          >
-            <div className="product-media">
-              <img
-                className="primary"
-                src={withBase(product.image)}
-                alt={product.name}
-              />
-              <img
-                className="secondary"
-                src={withBase(product.hoverImage)}
-                alt={`${product.name} alternate`}
-              />
-              <span className="badge">{product.tag}</span>
-            </div>
-            <div className="product-info">
-              <h3>{product.name}</h3>
-              <div className="product-price">
-                <span className="current">{product.price}</span>
-                <span className="compare">{product.compareAt}</span>
-              </div>
-            </div>
-          </article>
+            product={product}
+            index={index}
+            onAddToCart={onAddToCart}
+            onToggleWishlist={onToggleWishlist}
+            wishlisted={wishlistKeys.has(productKey(product))}
+          />
         ))}
       </div>
     </section>
@@ -513,32 +910,14 @@ const HomePage = ({ catalog }) => (
       </div>
       <div className="product-grid scroll-grid">
         {catalog.trending.map((product, index) => (
-          <article
+          <ProductCard
             key={product.name}
-            className="product-card fade-up"
-            style={{ '--delay': `${index * 0.05}s` }}
-          >
-            <div className="product-media">
-              <img
-                className="primary"
-                src={withBase(product.image)}
-                alt={product.name}
-              />
-              <img
-                className="secondary"
-                src={withBase(product.hoverImage)}
-                alt={`${product.name} alternate`}
-              />
-              <span className="badge">{product.tag}</span>
-            </div>
-            <div className="product-info">
-              <h3>{product.name}</h3>
-              <div className="product-price">
-                <span className="current">{product.price}</span>
-                <span className="compare">{product.compareAt}</span>
-              </div>
-            </div>
-          </article>
+            product={product}
+            index={index}
+            onAddToCart={onAddToCart}
+            onToggleWishlist={onToggleWishlist}
+            wishlisted={wishlistKeys.has(productKey(product))}
+          />
         ))}
       </div>
     </section>
@@ -615,7 +994,7 @@ const HomePage = ({ catalog }) => (
   </>
 )
 
-const CollectionPage = ({ catalog }) => {
+const CollectionPage = ({ catalog, onAddToCart, onToggleWishlist, wishlistKeys }) => {
   const { slug } = useParams()
   const details = collectionDetails[slug] || {
     title: 'Collection',
@@ -652,32 +1031,14 @@ const CollectionPage = ({ catalog }) => {
         </div>
         <div className="product-grid">
           {catalog.products.map((product, index) => (
-            <article
+            <ProductCard
               key={product.name}
-              className="product-card fade-up"
-              style={{ '--delay': `${index * 0.05}s` }}
-            >
-              <div className="product-media">
-                <img
-                  className="primary"
-                  src={withBase(product.image)}
-                  alt={product.name}
-                />
-                <img
-                  className="secondary"
-                  src={withBase(product.hoverImage)}
-                  alt={`${product.name} alternate`}
-                />
-                <span className="badge">{product.tag}</span>
-              </div>
-              <div className="product-info">
-                <h3>{product.name}</h3>
-                <div className="product-price">
-                  <span className="current">{product.price}</span>
-                  <span className="compare">{product.compareAt}</span>
-                </div>
-              </div>
-            </article>
+              product={product}
+              index={index}
+              onAddToCart={onAddToCart}
+              onToggleWishlist={onToggleWishlist}
+              wishlisted={wishlistKeys.has(productKey(product))}
+            />
           ))}
         </div>
       </section>
@@ -878,11 +1239,95 @@ const NotFoundPage = () => (
 
 function App() {
   const [catalog, setCatalog] = useState(fallbackCatalog)
+  const [cart, setCart] = useState(() => readStorage('walkline.cart', {}))
+  const [wishlist, setWishlist] = useState(() => readStorage('walkline.wishlist', []))
+  const [isCartOpen, setIsCartOpen] = useState(false)
+  const [isWishlistOpen, setIsWishlistOpen] = useState(false)
+
+  const wishlistKeys = useMemo(() => new Set(wishlist), [wishlist])
+  const cartCount = useMemo(
+    () => Object.values(cart).reduce((sum, value) => sum + (Number(value) || 0), 0),
+    [cart],
+  )
+  const wishlistCount = wishlist.length
+
+  const productIndex = useMemo(() => {
+    const map = new Map()
+    const products = [
+      ...(catalog?.products ?? []),
+      ...(catalog?.trending ?? []),
+    ]
+    products.forEach((product) => {
+      const key = productKey(product)
+      if (key && !map.has(key)) {
+        map.set(key, product)
+      }
+    })
+    return map
+  }, [catalog])
+
+  const cartItems = useMemo(() => {
+    return Object.entries(cart)
+      .filter(([, quantity]) => Number(quantity) > 0)
+      .map(([name, quantity]) => ({
+        name,
+        quantity: Number(quantity) || 0,
+        product: productIndex.get(name) ?? null,
+      }))
+  }, [cart, productIndex])
+
+  const handleAddToCart = (product) => {
+    const key = productKey(product)
+    if (!key) {
+      return
+    }
+    setCart((prev) => {
+      return { ...prev, [key]: (prev[key] ?? 0) + 1 }
+    })
+  }
+
+  const handleSetCartQuantity = (name, quantity) => {
+    const nextQuantity = Math.max(0, Number(quantity) || 0)
+    setCart((prev) => {
+      const next = { ...prev }
+      if (nextQuantity <= 0) {
+        delete next[name]
+      } else {
+        next[name] = nextQuantity
+      }
+      return next
+    })
+  }
+
+  const handleToggleWishlist = (product) => {
+    const key = productKey(product)
+    if (!key) {
+      return
+    }
+    setWishlist((prev) => {
+      const exists = prev.includes(key)
+      return exists ? prev.filter((item) => item !== key) : [...prev, key]
+    })
+  }
+
+  const handleRemoveFromWishlist = (name) => {
+    setWishlist((prev) => prev.filter((item) => item !== name))
+  }
+
+  useEffect(() => {
+    writeStorage('walkline.cart', cart)
+  }, [cart])
+
+  useEffect(() => {
+    writeStorage('walkline.wishlist', wishlist)
+  }, [wishlist])
 
   useEffect(() => {
     let cancelled = false
 
-    fetch('/api/catalog')
+    const apiBase = (import.meta.env.VITE_API_BASE_URL ?? '').replace(/\/$/, '')
+
+    fetch(`${apiBase}/api/catalog`)
       .then((response) => {
         if (!response.ok) {
           return null
@@ -915,14 +1360,135 @@ function App() {
         </div>
       </div>
 
-      <Header nav={catalog.nav} />
+      <Header
+        nav={catalog.nav}
+        cartCount={cartCount}
+        wishlistCount={wishlistCount}
+        onOpenCart={() => setIsCartOpen(true)}
+        onOpenWishlist={() => setIsWishlistOpen(true)}
+      />
+
+      <Drawer title="Cart" open={isCartOpen} onClose={() => setIsCartOpen(false)}>
+        {cartItems.length ? (
+          <div className="drawer-list">
+            {cartItems.map(({ name, quantity, product }) => (
+              <div className="drawer-item" key={name}>
+                <div className="drawer-item-media">
+                  {product?.image ? (
+                    <img src={withBase(product.image)} alt={name} />
+                  ) : (
+                    <div className="drawer-item-placeholder" aria-hidden="true" />
+                  )}
+                </div>
+                <div className="drawer-item-info">
+                  <strong>{name}</strong>
+                  <div className="drawer-item-meta">
+                    {product?.price ? <span className="muted">{product.price}</span> : null}
+                  </div>
+                  <div className="drawer-item-actions">
+                    <div className="qty">
+                      <button
+                        type="button"
+                        className="qty-button"
+                        onClick={() => handleSetCartQuantity(name, quantity - 1)}
+                        aria-label="Decrease quantity"
+                      >
+                        −
+                      </button>
+                      <span className="qty-value" aria-label={`Quantity ${quantity}`}>
+                        {quantity}
+                      </span>
+                      <button
+                        type="button"
+                        className="qty-button"
+                        onClick={() => handleSetCartQuantity(name, quantity + 1)}
+                        aria-label="Increase quantity"
+                      >
+                        +
+                      </button>
+                    </div>
+                    <button
+                      type="button"
+                      className="text-link"
+                      onClick={() => handleSetCartQuantity(name, 0)}
+                    >
+                      Remove
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p className="muted">Your cart is empty.</p>
+        )}
+      </Drawer>
+
+      <Drawer title="Wishlist" open={isWishlistOpen} onClose={() => setIsWishlistOpen(false)}>
+        {wishlist.length ? (
+          <div className="drawer-list">
+            {wishlist.map((name) => {
+              const product = productIndex.get(name) ?? null
+              return (
+                <div className="drawer-item" key={name}>
+                  <div className="drawer-item-media">
+                    {product?.image ? (
+                      <img src={withBase(product.image)} alt={name} />
+                    ) : (
+                      <div className="drawer-item-placeholder" aria-hidden="true" />
+                    )}
+                  </div>
+                  <div className="drawer-item-info">
+                    <strong>{name}</strong>
+                    <div className="drawer-item-meta">
+                      {product?.price ? <span className="muted">{product.price}</span> : null}
+                    </div>
+                    <div className="drawer-item-actions">
+                      <button
+                        type="button"
+                        className="button small"
+                        onClick={() => product && handleAddToCart(product)}
+                        disabled={!product}
+                      >
+                        Add to cart
+                      </button>
+                      <button type="button" className="text-link" onClick={() => handleRemoveFromWishlist(name)}>
+                        Remove
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+        ) : (
+          <p className="muted">Your wishlist is empty.</p>
+        )}
+      </Drawer>
 
       <main className="page-main">
         <Routes>
-          <Route path="/" element={<HomePage catalog={catalog} />} />
+          <Route
+            path="/"
+            element={(
+              <HomePage
+                catalog={catalog}
+                onAddToCart={handleAddToCart}
+                onToggleWishlist={handleToggleWishlist}
+                wishlistKeys={wishlistKeys}
+              />
+            )}
+          />
           <Route
             path="/collections/:slug"
-            element={<CollectionPage catalog={catalog} />}
+            element={(
+              <CollectionPage
+                catalog={catalog}
+                onAddToCart={handleAddToCart}
+                onToggleWishlist={handleToggleWishlist}
+                wishlistKeys={wishlistKeys}
+              />
+            )}
           />
           <Route path="/about" element={<AboutPage />} />
           <Route path="/reviews" element={<ReviewsPage catalog={catalog} />} />
