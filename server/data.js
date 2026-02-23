@@ -1,4 +1,4 @@
-export const catalog = {
+﻿export const catalog = {
   brand: 'Walkline',
   announcement: [
     'Welcome to Walkline',
@@ -6,20 +6,20 @@ export const catalog = {
     'Free shipping over Rs. 10000.',
   ],
   nav: [
-    { label: 'Wallets', to: '/collections/wallets' },
-    { label: 'Keychains', to: '/collections/keychains' },
-    { label: 'Reviews', to: '/reviews' },
-    { label: 'About Us', to: '/about' },
+    { label: 'Home', to: '/' },
+    { label: 'Wallets', to: '/wallets' },
+    { label: 'Keychains', to: '/keychains' },
+    { label: 'About', to: '/about' },
+    { label: 'Blog', to: '/blog' },
     { label: 'Contact', to: '/contact' },
-    { label: 'Track Order', to: '/track-order' },
   ],
   hero: {
     kicker: 'Walkline Studio',
     title: 'Premium wallets and keychains for everyday carry.',
     description:
       'Full-grain leather, clean stitching, and durable hardware built for your daily essentials.',
-    primaryCta: { label: 'Shop Wallets', to: '/collections/wallets' },
-    secondaryCta: { label: 'Explore Keychains', to: '/collections/keychains' },
+    primaryCta: { label: 'Shop Wallets', to: '/wallets' },
+    secondaryCta: { label: 'Explore Keychains', to: '/keychains' },
     highlights: ['Full-grain leather', 'Precision stitching', 'Everyday carry'],
     image: '/images/hero-wallet.jpg',
     tiles: [
@@ -31,22 +31,22 @@ export const catalog = {
     {
       title: 'Leather Wallets',
       image: '/images/category-wallets.jpg',
-      to: '/collections/wallets',
+      to: '/wallets',
     },
     {
       title: 'Slim Card Holders',
       image: '/images/category-cardholders.jpg',
-      to: '/collections/wallets',
+      to: '/wallets',
     },
     {
       title: 'Travel Wallets',
       image: '/images/category-travel.jpg',
-      to: '/collections/wallets',
+      to: '/wallets',
     },
     {
       title: 'Keychains',
       image: '/images/category-keychains.jpg',
-      to: '/collections/keychains',
+      to: '/keychains',
     },
   ],
   products: [
@@ -99,6 +99,22 @@ export const catalog = {
       hoverImage: '/images/products/wallet-minimal.jpg',
     },
     {
+      name: 'Long Wallet - Black',
+      price: 'Rs.2,850.00',
+      compareAt: 'Rs.3,600.00',
+      tag: 'New',
+      image: '/images/products/wallet-long-black.jpg',
+      hoverImage: '/images/products/wallet-long-black.jpg',
+    },
+    {
+      name: 'Long Wallet - Pink',
+      price: 'Rs.2,850.00',
+      compareAt: 'Rs.3,600.00',
+      tag: 'New',
+      image: '/images/products/wallet-long-pink.jpg',
+      hoverImage: '/images/products/wallet-long-pink.jpg',
+    },
+    {
       name: 'Braided Leather Keychain - Black',
       price: 'Rs.850.00',
       compareAt: 'Rs.1,200.00',
@@ -113,6 +129,38 @@ export const catalog = {
       tag: 'Sale',
       image: '/images/products/keychain-metal.jpg',
       hoverImage: '/images/products/keychain-metal.jpg',
+    },
+    {
+      name: 'Short Leather Keychain - Orange',
+      price: 'Rs.950.00',
+      compareAt: 'Rs.1,300.00',
+      tag: 'New',
+      image: '/images/products/keychain-orange.jpg',
+      hoverImage: '/images/products/keychain-orange.jpg',
+    },
+    {
+      name: 'Long Keychain Strap - Noir',
+      price: 'Rs.1,150.00',
+      compareAt: 'Rs.1,550.00',
+      tag: 'New',
+      image: '/images/products/keychain-long-noir.jpg',
+      hoverImage: '/images/products/keychain-long-noir.jpg',
+    },
+    {
+      name: 'Long Keychain Strap - Saddle',
+      price: 'Rs.1,150.00',
+      compareAt: 'Rs.1,550.00',
+      tag: 'New',
+      image: '/images/products/keychain-long-saddle.jpg',
+      hoverImage: '/images/products/keychain-long-saddle.jpg',
+    },
+    {
+      name: 'Long Keychain Strap - Steel',
+      price: 'Rs.1,250.00',
+      compareAt: 'Rs.1,650.00',
+      tag: 'New',
+      image: '/images/products/keychain-long-steel.jpg',
+      hoverImage: '/images/products/keychain-long-steel.jpg',
     },
   ],
   promos: [
@@ -202,39 +250,45 @@ export const catalog = {
       {
         title: 'Shop',
         links: [
-          { label: 'Wallets', to: '/collections/wallets' },
-          { label: 'Keychains', to: '/collections/keychains' },
-          { label: 'Best Selling', to: '/' },
-          { label: 'Trending', to: '/' },
+          { label: 'Home', to: '/' },
+          { label: 'Wallets', to: '/wallets' },
+          { label: "Men's Wallets", to: '/wallets/mens-wallets-pakistan' },
+          { label: "Women's Wallets", to: '/wallets/womens-wallets-pakistan' },
+          { label: 'Keychains', to: '/keychains' },
+          { label: 'Custom Keychains', to: '/keychains/custom-keychains-pakistan' },
         ],
       },
       {
-        title: 'Help',
+        title: 'Explore',
         links: [
-          { label: 'Track Order', to: '/track-order' },
-          { label: 'Shipping', to: '/contact' },
-          { label: 'Returns', to: '/contact' },
-          { label: 'Contact', to: '/contact' },
-        ],
-      },
-      {
-        title: 'About',
-        links: [
-          { label: 'About Us', to: '/about' },
+          { label: 'Blog', to: '/blog' },
           { label: 'Reviews', to: '/reviews' },
-          { label: 'Care Guide', to: '/about' },
-          { label: 'Careers', to: '/about' },
+          { label: 'About', to: '/about' },
+          { label: 'Contact', to: '/contact' },
+          { label: 'Track Order', to: '/track-order' },
         ],
       },
       {
-        title: 'Social',
+        title: 'Account',
         links: [
-          { label: 'Instagram', to: '/contact' },
-          { label: 'Facebook', to: '/contact' },
-          { label: 'TikTok', to: '/contact' },
-          { label: 'YouTube', to: '/contact' },
+          { label: 'Cart', to: '/cart' },
+          { label: 'Wishlist', to: '/wishlist' },
+          { label: 'Checkout', to: '/checkout' },
+          { label: 'Track Order', to: '/track-order' },
+        ],
+      },
+      {
+        title: 'More Pages',
+        links: [
+          { label: 'Home', to: '/' },
+          { label: 'Blog', to: '/blog' },
+          { label: 'Reviews', to: '/reviews' },
+          { label: 'About', to: '/about' },
+          { label: 'Contact', to: '/contact' },
+          { label: 'Track Order', to: '/track-order' },
         ],
       },
     ],
   },
 }
+
