@@ -1,7 +1,8 @@
-import { memo, useState } from 'react'
+import { memo } from 'react'
 import { Link } from 'react-router-dom'
 import HeartIcon from './HeartIcon'
 import { toProductPath, withBase } from '../../utils/shop'
+import { getProductGallery } from '../../utils/productImages'
 
 const isKeychainProduct = (product) => /keychain/i.test(product?.name || '')
 
@@ -13,13 +14,13 @@ const ProductCard = ({
   wishlisted = false,
   variant = 'auto',
 }) => {
-  const [isHoveringMedia, setIsHoveringMedia] = useState(false)
-  const canSwapImage = Boolean(product?.hoverImage && product?.hoverImage !== product?.image)
   const cardVariant = variant === 'auto'
     ? (isKeychainProduct(product) ? 'compact' : 'standard')
     : variant
-
-  const imageSrc = isHoveringMedia && canSwapImage ? product.hoverImage : product.image
+  const gallery = getProductGallery(product)
+  const primaryImage = gallery[0] ?? product?.image ?? ''
+  const secondaryImage = gallery[1] ?? product?.hoverImage ?? ''
+  const showSecondary = Boolean(secondaryImage && secondaryImage !== primaryImage)
 
   return (
     <article
@@ -31,20 +32,28 @@ const ProductCard = ({
           className="product-media-link"
           to={toProductPath(product)}
           aria-label={product?.name || 'Product'}
-          onMouseEnter={() => setIsHoveringMedia(true)}
-          onMouseLeave={() => setIsHoveringMedia(false)}
-          onFocus={() => setIsHoveringMedia(true)}
-          onBlur={() => setIsHoveringMedia(false)}
         >
-          {imageSrc ? (
-            <img
-              className="product-media-img"
-              src={withBase(imageSrc)}
-              alt={product?.name || 'Product image'}
-              loading={index === 0 ? 'eager' : 'lazy'}
-              decoding="async"
-              fetchPriority={index === 0 ? 'high' : 'low'}
-            />
+          {primaryImage ? (
+            <>
+              <img
+                className="product-media-img primary"
+                src={withBase(primaryImage)}
+                alt={product?.name || 'Product image'}
+                loading={index === 0 ? 'eager' : 'lazy'}
+                decoding="async"
+                fetchPriority={index === 0 ? 'high' : 'low'}
+              />
+              {showSecondary ? (
+                <img
+                  className="product-media-img secondary"
+                  src={withBase(secondaryImage)}
+                  alt={`${product?.name || 'Product'} alternate view`}
+                  loading="lazy"
+                  decoding="async"
+                  aria-hidden="true"
+                />
+              ) : null}
+            </>
           ) : (
             <div className="product-media-placeholder" aria-hidden="true" />
           )}

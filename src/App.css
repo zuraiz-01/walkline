@@ -64,11 +64,23 @@ img {
   align-items: center;
 }
 
+.logo-link {
+  gap: 10px;
+}
+
 .logo-image {
   width: 180px;
   height: 42px;
   object-fit: cover;
   object-position: center 30%;
+}
+
+.logo-text {
+  font-family: var(--heading-font);
+  font-size: 1rem;
+  letter-spacing: 0.12rem;
+  text-transform: uppercase;
+  color: var(--ink);
 }
 
 .nav-links {
@@ -1236,17 +1248,28 @@ select:focus-visible {
 
 .product-media-link {
   display: block;
+  position: relative;
   width: 100%;
   height: 100%;
 }
 
 .product-media-img {
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
   object-position: center;
   display: block;
-  transition: transform 0.3s ease;
+  transition: transform 0.3s ease, opacity 0.25s ease;
+}
+
+.product-media-img.primary {
+  opacity: 1;
+}
+
+.product-media-img.secondary {
+  opacity: 0;
 }
 
 .product-media-placeholder {
@@ -1257,6 +1280,16 @@ select:focus-visible {
 
 .product-card:hover .product-media-img {
   transform: scale(1.02);
+}
+
+.product-card:hover .product-media-img.primary,
+.product-media-link:focus-visible .product-media-img.primary {
+  opacity: 0;
+}
+
+.product-card:hover .product-media-img.secondary,
+.product-media-link:focus-visible .product-media-img.secondary {
+  opacity: 1;
 }
 
 .product-title-link {
@@ -2365,6 +2398,10 @@ select:focus-visible {
     height: 36px;
   }
 
+  .logo-text {
+    font-size: 0.86rem;
+  }
+
   .page-hero {
     grid-template-columns: 1fr;
   }
@@ -2454,6 +2491,11 @@ select:focus-visible {
   .logo-image {
     width: 130px;
     height: 32px;
+  }
+
+  .logo-text {
+    font-size: 0.76rem;
+    letter-spacing: 0.1rem;
   }
 
   .menu-button {

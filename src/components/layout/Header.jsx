@@ -15,6 +15,7 @@ const Header = ({
     <div className="header-inner">
       <Link className="logo-link" to="/" aria-label="Walkline home">
         <img className="logo-image" src={logoBlack} alt="Walkline" />
+        <span className="logo-text">Walkline</span>
       </Link>
       <nav className="nav-links" aria-label="Primary">
         {nav.map((item) => (
