@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import logoWhite from '../../assets/walkline-logo-white.jpeg'
+import logoWhite from '../../assets/walkline-logo-white.png'
 
 const Footer = ({ footer }) => {
   const year = new Date().getFullYear()
